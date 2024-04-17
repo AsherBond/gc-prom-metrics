@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -71,9 +72,15 @@ type LazyCounter struct {
 
 type Counter = LazyCounter
 
+// NewCounter creates a new LazyCounter with the given name.
+// If a counter with the given name already exists, the program panics.
 func NewCounter(name string) *LazyCounter {
 	lazyCountersSetLock.Lock()
 	defer lazyCountersSetLock.Unlock()
+
+	if _, ok := lazyCountersSet[name]; ok {
+		panic(fmt.Errorf("lazy counter with name %q already exists", name))
+	}
 
 	return newCounterUnsafe(name)
 }
