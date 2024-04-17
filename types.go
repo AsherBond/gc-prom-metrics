@@ -59,13 +59,18 @@ var (
 	lazyCountersSetLock sync.Mutex
 )
 
+const (
+	falseUint32 = 0
+	trueUint32  = 1
+)
+
 // LazyCounter is a counter that is lazily initialized when it is first used,
 // to avoid registering unused metrics.
 // It is safe to use from concurrent goroutines.
 // Note: a rare race-condition can cause data loss is multiple actions are performed on the counter
 // when it is not initialized yet.
 type LazyCounter struct {
-	active atomic.Bool
+	active uint32
 	name   string
 	inner  *metrics.Counter
 }
@@ -111,7 +116,10 @@ func (mc *LazyCounter) Dec() {
 }
 
 func (mc *LazyCounter) Get() uint64 {
-	if !mc.active.Load() || mc.inner == nil {
+	if mc.active == falseUint32 {
+		return 0
+	}
+	if mc.inner == nil {
 		return 0
 	}
 	return mc.inner.Get()
@@ -132,17 +140,20 @@ func (mc *LazyCounter) Add(n int) {
 }
 
 func (mc *LazyCounter) IsActive() bool {
-	return mc.active.Load()
+	return atomic.LoadUint32(&mc.active) == trueUint32
 }
 
 func (mc *LazyCounter) setActiveIfNeeded() {
-	swapped := mc.active.CompareAndSwap(false, true)
+	if mc.active != falseUint32 {
+		return
+	}
+	swapped := atomic.CompareAndSwapUint32(&mc.active, falseUint32, trueUint32)
 	if swapped {
 		mc.inner = metrics.NewCounter(mc.name)
 	}
 }
 
 func newCounterUnsafe(name string) *LazyCounter {
-	lazyCountersSet[name] = &LazyCounter{active: atomic.Bool{}, name: name, inner: nil}
+	lazyCountersSet[name] = &LazyCounter{active: falseUint32, name: name, inner: nil}
 	return lazyCountersSet[name]
 }
