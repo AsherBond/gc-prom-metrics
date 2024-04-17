@@ -79,7 +79,7 @@ func NewCounter(name string) *LazyCounter {
 	defer lazyCountersSetLock.Unlock()
 
 	if _, ok := lazyCountersSet[name]; ok {
-		panic(fmt.Errorf("lazy counter with name %q already exists", name))
+		panic(fmt.Errorf("lazy counter with name %s already exists", name))
 	}
 
 	return newCounterUnsafe(name)
