@@ -1,6 +1,6 @@
 module github.com/groundcover-com/metrics
 
-go 1.22.0
+go 1.20
 
 require github.com/VictoriaMetrics/metrics v1.33.1
 
