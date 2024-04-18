@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -51,6 +52,10 @@ func NewFloatCounter(name string) *FloatCounter {
 }
 func GetOrCreateFloatCounter(name string) *FloatCounter {
 	return metrics.GetOrCreateFloatCounter(name)
+}
+
+func WritePrometheus(w io.Writer, exposeProcessMetrics bool) {
+	metrics.WritePrometheus(w, exposeProcessMetrics)
 }
 
 var (
