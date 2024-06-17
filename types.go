@@ -64,20 +64,14 @@ var (
 	lazyCountersSetLock sync.Mutex
 )
 
-const (
-	falseUint32 = 0
-	trueUint32  = 1
-)
-
 // LazyCounter is a counter that is lazily initialized when it is first used,
 // to avoid registering unused metrics.
 // It is safe to use from concurrent goroutines.
 // Note: a rare race-condition can cause data loss is multiple actions are performed on the counter
 // when it is not initialized yet.
 type LazyCounter struct {
-	active uint32
-	name   string
-	inner  *metrics.Counter
+	name  string
+	inner atomic.Pointer[metrics.Counter]
 }
 
 type Counter = LazyCounter
@@ -108,57 +102,45 @@ func GetOrCreateCounter(name string) *LazyCounter {
 
 func (mc *LazyCounter) Inc() {
 	mc.setActiveIfNeeded()
-	if mc.inner != nil {
-		mc.inner.Inc()
-	}
+	mc.inner.Load().Inc()
 }
 
 func (mc *LazyCounter) Dec() {
 	mc.setActiveIfNeeded()
-	if mc.inner != nil {
-		mc.inner.Dec()
-	}
+	mc.inner.Load().Dec()
 }
 
 func (mc *LazyCounter) Get() uint64 {
-	if mc.active == falseUint32 {
+	inner := mc.inner.Load()
+	if inner == nil {
 		return 0
 	}
-	if mc.inner == nil {
-		return 0
-	}
-	return mc.inner.Get()
+	return inner.Get()
 }
 
 func (mc *LazyCounter) Set(n uint64) {
 	mc.setActiveIfNeeded()
-	if mc.inner != nil {
-		mc.inner.Set(n)
-	}
+	mc.inner.Load().Set(n)
 }
 
 func (mc *LazyCounter) Add(n int) {
 	mc.setActiveIfNeeded()
-	if mc.inner != nil {
-		mc.inner.Add(n)
-	}
+	mc.inner.Load().Add(n)
 }
 
 func (mc *LazyCounter) IsActive() bool {
-	return atomic.LoadUint32(&mc.active) == trueUint32
+	return mc.inner.Load() != nil
 }
 
 func (mc *LazyCounter) setActiveIfNeeded() {
-	if mc.active != falseUint32 {
+	if mc.inner.Load() != nil {
 		return
 	}
-	swapped := atomic.CompareAndSwapUint32(&mc.active, falseUint32, trueUint32)
-	if swapped {
-		mc.inner = metrics.NewCounter(mc.name)
-	}
+	counter := metrics.GetOrCreateCounter(mc.name)
+	mc.inner.Store(counter)
 }
 
 func newCounterUnsafe(name string) *LazyCounter {
-	lazyCountersSet[name] = &LazyCounter{active: falseUint32, name: name, inner: nil}
+	lazyCountersSet[name] = &LazyCounter{name: name, inner: atomic.Pointer[metrics.Counter]{}}
 	return lazyCountersSet[name]
 }
