@@ -111,11 +111,11 @@ func (mc *LazyCounter) Dec() {
 }
 
 func (mc *LazyCounter) Get() uint64 {
-	inner := mc.inner.Load()
-	if inner == nil {
+	if !mc.IsActive() {
 		return 0
+
 	}
-	return inner.Get()
+	return mc.inner.Load().Get()
 }
 
 func (mc *LazyCounter) Set(n uint64) {
@@ -133,7 +133,7 @@ func (mc *LazyCounter) IsActive() bool {
 }
 
 func (mc *LazyCounter) setActiveIfNeeded() {
-	if mc.inner.Load() != nil {
+	if mc.IsActive() {
 		return
 	}
 	counter := metrics.GetOrCreateCounter(mc.name)
