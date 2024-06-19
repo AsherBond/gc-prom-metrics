@@ -67,8 +67,6 @@ var (
 // LazyCounter is a counter that is lazily initialized when it is first used,
 // to avoid registering unused metrics.
 // It is safe to use from concurrent goroutines.
-// Note: a rare race-condition can cause data loss is multiple actions are performed on the counter
-// when it is not initialized yet.
 type LazyCounter struct {
 	name  string
 	inner atomic.Pointer[metrics.Counter]
