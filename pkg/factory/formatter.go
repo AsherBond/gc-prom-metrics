@@ -1,9 +1,8 @@
 package factory
 
 import (
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 )
 
 func formatMetric(metric string, labels map[string]string) string {
