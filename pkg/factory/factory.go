@@ -41,7 +41,7 @@ func GetOrCreateGauge(
 	return types.GetOrCreateGauge(formatMetric(name, opts.Apply(labels)), f)
 }
 
-func GetOrCreateLeveledHistogram(name string, labels map[string]string, opts options.Options) *types.Histogram {
+func GetOrCreateHistogram(name string, labels map[string]string, opts options.Options) *types.Histogram {
 	return types.GetOrCreateHistogram(formatMetric(name, opts.Apply(labels)))
 }
 
@@ -119,15 +119,15 @@ func CreateInfoHistogram(name string, labels map[string]string) *types.Histogram
 }
 
 func GetOrCreateErrorHistogram(name string, labels map[string]string) *types.Histogram {
-	return GetOrCreateLeveledHistogram(name, labels, options.Error)
+	return GetOrCreateHistogram(name, labels, options.Error)
 }
 
 func GetOrCreateWarningHistogram(name string, labels map[string]string) *types.Histogram {
-	return GetOrCreateLeveledHistogram(name, labels, options.Warning)
+	return GetOrCreateHistogram(name, labels, options.Warning)
 }
 
 func GetOrCreateInfoHistogram(name string, labels map[string]string) *types.Histogram {
-	return GetOrCreateLeveledHistogram(name, labels, options.Info)
+	return GetOrCreateHistogram(name, labels, options.Info)
 }
 
 func CreateErrorSummary(name string, labels map[string]string) *types.Summary {
