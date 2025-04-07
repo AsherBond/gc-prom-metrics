@@ -11,15 +11,15 @@ func CreateCounter(name string, labels map[string]string, opts options.Options) 
 	return types.NewCounter(formatMetric(name, opts.Apply(labels)))
 }
 
-func CreateLeveledGauge(name string, labels map[string]string, f func() float64, opts options.Options) *types.Gauge {
+func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *types.Gauge {
 	return types.NewGauge(formatMetric(name, opts.Apply(labels)), f)
 }
 
-func CreateLeveledHistogram(name string, labels map[string]string, opts options.Options) *types.Histogram {
+func CreateHistogram(name string, labels map[string]string, opts options.Options) *types.Histogram {
 	return types.NewHistogram(formatMetric(name, opts.Apply(labels)))
 }
 
-func CreateLeveledSummary(
+func CreateSummary(
 	name string,
 	labels map[string]string,
 	opts options.Options,
@@ -32,7 +32,7 @@ func GetOrCreateCounter(name string, labels map[string]string, opts options.Opti
 	return types.GetOrCreateCounter(formatMetric(name, opts.Apply(labels)))
 }
 
-func GetOrCreateLeveledGauge(
+func GetOrCreateGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
@@ -45,7 +45,7 @@ func GetOrCreateLeveledHistogram(name string, labels map[string]string, opts opt
 	return types.GetOrCreateHistogram(formatMetric(name, opts.Apply(labels)))
 }
 
-func GetOrCreateLeveledSummary(
+func GetOrCreateSummary(
 	name string,
 	labels map[string]string,
 	opts options.Options,
@@ -83,39 +83,39 @@ func GetOrCreateInfoCounter(name string, labels map[string]string) *types.Counte
 }
 
 func CreateErrorGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return CreateLeveledGauge(name, labels, f, options.Error)
+	return CreateGauge(name, labels, f, options.Error)
 }
 
 func CreateWarningGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return CreateLeveledGauge(name, labels, f, options.Warning)
+	return CreateGauge(name, labels, f, options.Warning)
 }
 
 func CreateInfoGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return CreateLeveledGauge(name, labels, f, options.Info)
+	return CreateGauge(name, labels, f, options.Info)
 }
 
 func GetOrCreateErrorGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return GetOrCreateLeveledGauge(name, labels, f, options.Error)
+	return GetOrCreateGauge(name, labels, f, options.Error)
 }
 
 func GetOrCreateWarningGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return GetOrCreateLeveledGauge(name, labels, f, options.Warning)
+	return GetOrCreateGauge(name, labels, f, options.Warning)
 }
 
 func GetOrCreateInfoGauge(name string, labels map[string]string, f func() float64) *types.Gauge {
-	return GetOrCreateLeveledGauge(name, labels, f, options.Info)
+	return GetOrCreateGauge(name, labels, f, options.Info)
 }
 
 func CreateErrorHistogram(name string, labels map[string]string) *types.Histogram {
-	return CreateLeveledHistogram(name, labels, options.Error)
+	return CreateHistogram(name, labels, options.Error)
 }
 
 func CreateWarningHistogram(name string, labels map[string]string) *types.Histogram {
-	return CreateLeveledHistogram(name, labels, options.Warning)
+	return CreateHistogram(name, labels, options.Warning)
 }
 
 func CreateInfoHistogram(name string, labels map[string]string) *types.Histogram {
-	return CreateLeveledHistogram(name, labels, options.Info)
+	return CreateHistogram(name, labels, options.Info)
 }
 
 func GetOrCreateErrorHistogram(name string, labels map[string]string) *types.Histogram {
@@ -131,15 +131,15 @@ func GetOrCreateInfoHistogram(name string, labels map[string]string) *types.Hist
 }
 
 func CreateErrorSummary(name string, labels map[string]string) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Error, options.NewSummaryOptions())
+	return CreateSummary(name, labels, options.Error, options.NewSummaryOptions())
 }
 
 func CreateWarningSummary(name string, labels map[string]string) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Warning, options.NewSummaryOptions())
+	return CreateSummary(name, labels, options.Warning, options.NewSummaryOptions())
 }
 
 func CreateInfoSummary(name string, labels map[string]string) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Info, options.NewSummaryOptions())
+	return CreateSummary(name, labels, options.Info, options.NewSummaryOptions())
 }
 
 func CreateErrorSummaryWithOptions(
@@ -147,7 +147,7 @@ func CreateErrorSummaryWithOptions(
 	labels map[string]string,
 	opts options.SummaryOptions,
 ) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Error, opts)
+	return CreateSummary(name, labels, options.Error, opts)
 }
 
 func CreateWarningSummaryWithOptions(
@@ -155,23 +155,23 @@ func CreateWarningSummaryWithOptions(
 	labels map[string]string,
 	opts options.SummaryOptions,
 ) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Warning, opts)
+	return CreateSummary(name, labels, options.Warning, opts)
 }
 
 func CreateInfoSummaryWithOptions(name string, labels map[string]string, opts options.SummaryOptions) *types.Summary {
-	return CreateLeveledSummary(name, labels, options.Info, opts)
+	return CreateSummary(name, labels, options.Info, opts)
 }
 
 func GetOrCreateErrorSummary(name string, labels map[string]string) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Error, options.NewSummaryOptions())
+	return GetOrCreateSummary(name, labels, options.Error, options.NewSummaryOptions())
 }
 
 func GetOrCreateWarningSummary(name string, labels map[string]string) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Warning, options.NewSummaryOptions())
+	return GetOrCreateSummary(name, labels, options.Warning, options.NewSummaryOptions())
 }
 
 func GetOrCreateInfoSummary(name string, labels map[string]string) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Info, options.NewSummaryOptions())
+	return GetOrCreateSummary(name, labels, options.Info, options.NewSummaryOptions())
 }
 
 func GetOrCreateErrorSummaryWithOptions(
@@ -179,7 +179,7 @@ func GetOrCreateErrorSummaryWithOptions(
 	labels map[string]string,
 	opts options.SummaryOptions,
 ) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Error, opts)
+	return GetOrCreateSummary(name, labels, options.Error, opts)
 }
 
 func GetOrCreateWarningSummaryWithOptions(
@@ -187,7 +187,7 @@ func GetOrCreateWarningSummaryWithOptions(
 	labels map[string]string,
 	opts options.SummaryOptions,
 ) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Warning, opts)
+	return GetOrCreateSummary(name, labels, options.Warning, opts)
 }
 
 func GetOrCreateInfoSummaryWithOptions(
@@ -195,7 +195,7 @@ func GetOrCreateInfoSummaryWithOptions(
 	labels map[string]string,
 	opts options.SummaryOptions,
 ) *types.Summary {
-	return GetOrCreateLeveledSummary(name, labels, options.Info, opts)
+	return GetOrCreateSummary(name, labels, options.Info, opts)
 }
 
 // Subtract from atomic uint variable with 64 bits.
