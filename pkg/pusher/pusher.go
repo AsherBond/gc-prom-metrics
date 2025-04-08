@@ -24,6 +24,7 @@ func (p *Pusher) AddSet(set *set.Set, opts PushedSetOptions) {
 
 	pushedSet := newPushedSet(p.ctx, set, opts, p.opts)
 	p.sets = append(p.sets, pushedSet)
+
 	go pushedSet.startLoop()
 }
 
