@@ -5,6 +5,10 @@ import (
 	"github.com/groundcover-com/metrics/pkg/options"
 )
 
+func NewCounter(name string) *metrics.Counter {
+	return Set.NewCounter(name)
+}
+
 func CreateCounter(name string, labels map[string]string, opts options.Options) *metrics.Counter {
 	return Set.CreateCounter(name, labels, opts)
 }
