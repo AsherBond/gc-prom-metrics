@@ -7,18 +7,12 @@ import (
 )
 
 type PusherOptions struct {
-	Interval    *time.Duration
 	URL         string
 	PushOptions metrics.PushOptions
 }
 
 func NewPusherOptions() PusherOptions {
 	return PusherOptions{}
-}
-
-func (o PusherOptions) WithInterval(interval time.Duration) PusherOptions {
-	o.Interval = &interval
-	return o
 }
 
 func (o PusherOptions) WithPushOptions(pushOptions metrics.PushOptions) PusherOptions {
@@ -28,5 +22,18 @@ func (o PusherOptions) WithPushOptions(pushOptions metrics.PushOptions) PusherOp
 
 func (o PusherOptions) WithURL(url string) PusherOptions {
 	o.URL = url
+	return o
+}
+
+type PushedSetOptions struct {
+	Interval *time.Duration
+}
+
+func NewPushedSetOptions() PushedSetOptions {
+	return PushedSetOptions{}
+}
+
+func (o PushedSetOptions) WithInterval(interval time.Duration) PushedSetOptions {
+	o.Interval = &interval
 	return o
 }
