@@ -1,14 +1,8 @@
-package factory
+package set
 
 import (
 	"slices"
 	"strings"
-
-	"github.com/groundcover-com/metrics/pkg/set"
-)
-
-var (
-	defaultSet = set.NewSet()
 )
 
 func formatMetric(metric string, labels map[string]string) string {
