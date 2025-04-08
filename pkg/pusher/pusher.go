@@ -1,17 +1,17 @@
-package set
+package pusher
 
 import (
 	"context"
 	"sync"
 	"time"
 
-	"github.com/groundcover-com/metrics/pkg/options"
+	"github.com/groundcover-com/metrics/pkg/set"
 )
 
 type pushedSet struct {
-	set        *Set
-	setOpts    options.PushedSetOptions
-	pusherOpts options.PusherOptions
+	set        *set.Set
+	setOpts    PushedSetOptions
+	pusherOpts PusherOptions
 	ctx        context.Context
 	ctxCancel  context.CancelFunc
 
@@ -22,9 +22,9 @@ type pushedSet struct {
 
 func newPushedSet(
 	ctx context.Context,
-	set *Set,
-	setOpts options.PushedSetOptions,
-	pusherOpts options.PusherOptions,
+	set *set.Set,
+	setOpts PushedSetOptions,
+	pusherOpts PusherOptions,
 ) *pushedSet {
 	ctx, ctxCancel := context.WithCancel(ctx)
 
@@ -80,11 +80,11 @@ func (p *pushedSet) loop() bool {
 	for {
 		select {
 		case <-tickerChannel:
-			p.set.set.PushMetrics(p.ctx, p.pusherOpts.URL, &p.pusherOpts.PushOptions)
+			p.set.PushMetrics(p.ctx, p.pusherOpts.URL, &p.pusherOpts.PushOptions)
 		case <-p.intervalChangeChan:
 			return true
 		case <-p.triggerPushChan:
-			p.set.set.PushMetrics(p.ctx, p.pusherOpts.URL, &p.pusherOpts.PushOptions)
+			p.set.PushMetrics(p.ctx, p.pusherOpts.URL, &p.pusherOpts.PushOptions)
 			return true
 		case <-p.ctx.Done():
 			return false
@@ -128,14 +128,14 @@ type Pusher struct {
 	ctx      context.Context
 	sets     []*pushedSet
 	setsLock sync.RWMutex
-	opts     options.PusherOptions
+	opts     PusherOptions
 }
 
-func NewPusher(ctx context.Context, opts options.PusherOptions) *Pusher {
+func NewPusher(ctx context.Context, opts PusherOptions) *Pusher {
 	return &Pusher{ctx: ctx, opts: opts, sets: make([]*pushedSet, 0)}
 }
 
-func (p *Pusher) AddSet(set *Set, opts options.PushedSetOptions) {
+func (p *Pusher) AddSet(set *set.Set, opts PushedSetOptions) {
 	p.setsLock.Lock()
 	defer p.setsLock.Unlock()
 
@@ -144,7 +144,7 @@ func (p *Pusher) AddSet(set *Set, opts options.PushedSetOptions) {
 	pushedSet.startLoop()
 }
 
-func (p *Pusher) RemoveSet(set *Set) {
+func (p *Pusher) RemoveSet(set *set.Set) {
 	p.setsLock.Lock()
 	defer p.setsLock.Unlock()
 

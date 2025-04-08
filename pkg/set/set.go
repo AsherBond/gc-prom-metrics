@@ -1,6 +1,7 @@
 package set
 
 import (
+	"context"
 	"errors"
 	"sync"
 	"time"
@@ -46,6 +47,10 @@ func (s *Set) DeregisterPushListener(listener PushListener) {
 			s.pushListeners = append(s.pushListeners[:i], s.pushListeners[i+1:]...)
 		}
 	}
+}
+
+func (s *Set) PushMetrics(ctx context.Context, pushURL string, opts *metrics.PushOptions) error {
+	return s.set.PushMetrics(ctx, pushURL, opts)
 }
 
 func (s *Set) TriggerPush() {

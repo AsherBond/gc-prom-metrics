@@ -1,9 +1,9 @@
-package factory
+package global
 
 import (
 	"github.com/groundcover-com/metrics/pkg/set"
 )
 
 var (
-	defaultSet = set.NewSet()
+	Set = set.NewSet()
 )
