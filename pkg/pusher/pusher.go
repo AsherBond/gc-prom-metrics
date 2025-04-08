@@ -39,7 +39,7 @@ func newPushedSet(
 
 func (p *pushedSet) startLoop() {
 	p.channelsLock.Lock()
-	p.intervalChangeChan = make(chan *time.Duration)
+	p.intervalChangeChan = make(chan *time.Duration, 10)
 	p.triggerPushChan = make(chan struct{})
 	p.channelsLock.Unlock()
 
