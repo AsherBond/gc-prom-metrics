@@ -17,6 +17,7 @@ type pushedSet struct {
 
 	intervalChangeChan chan *time.Duration
 	triggerPushChan    chan struct{}
+	channelsLock       sync.Mutex
 }
 
 func newPushedSet(
@@ -37,14 +38,25 @@ func newPushedSet(
 }
 
 func (p *pushedSet) startLoop() {
+	p.channelsLock.Lock()
 	p.intervalChangeChan = make(chan *time.Duration)
-	defer close(p.intervalChangeChan)
-
 	p.triggerPushChan = make(chan struct{})
-	defer close(p.triggerPushChan)
+	p.channelsLock.Unlock()
 
 	p.set.RegisterPushListener(p)
-	defer p.set.DeregisterPushListener(p)
+
+	defer func() {
+		p.set.DeregisterPushListener(p)
+
+		p.channelsLock.Lock()
+		defer p.channelsLock.Unlock()
+
+		close(p.intervalChangeChan)
+		p.intervalChangeChan = nil
+
+		close(p.triggerPushChan)
+		p.triggerPushChan = nil
+	}()
 
 	for {
 		if !p.loop() {
@@ -81,17 +93,33 @@ func (p *pushedSet) loop() bool {
 }
 
 func (p *pushedSet) OnTriggerPush() {
+	p.channelsLock.Lock()
+	defer p.channelsLock.Unlock()
+
+	ch := p.triggerPushChan
+	if ch == nil {
+		return
+	}
+
 	select {
-	case p.triggerPushChan <- struct{}{}:
+	case ch <- struct{}{}:
 	default:
 	}
 }
 
 func (p *pushedSet) OnChangeInterval(interval *time.Duration) {
+	p.channelsLock.Lock()
+	defer p.channelsLock.Unlock()
+
 	p.setOpts.Interval = interval
 
+	ch := p.intervalChangeChan
+	if ch == nil {
+		return
+	}
+
 	select {
-	case p.intervalChangeChan <- interval:
+	case ch <- interval:
 	default:
 	}
 }
