@@ -27,7 +27,8 @@ type Set struct {
 
 func NewSet() *Set {
 	return &Set{
-		set: metrics.NewSet(),
+		set:           metrics.NewSet(),
+		pushListeners: make([]PushListener, 0),
 	}
 }
 
