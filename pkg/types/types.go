@@ -12,6 +12,7 @@ import (
 
 // this file exposes the metrics types from VictoriaMetrics/metrics package
 // the Counter type is replaced with LazyCounter to avoid registering unused metrics
+// We plan on changing the way that metrics are collected and stored, and then we can get rid of the LazyCounter type.
 
 type Histogram = metrics.Histogram
 
