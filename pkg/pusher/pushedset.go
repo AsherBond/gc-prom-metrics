@@ -37,26 +37,31 @@ func newPushedSet(
 	}
 }
 
-func (p *pushedSet) startLoop() {
+func (p *pushedSet) initiateChannels() {
 	p.channelsLock.Lock()
+	defer p.channelsLock.Unlock()
+
 	p.intervalChangeChan = make(chan *time.Duration, 10)
 	p.triggerPushChan = make(chan struct{})
-	p.channelsLock.Unlock()
+}
+
+func (p *pushedSet) closeChannels() {
+	p.channelsLock.Lock()
+	defer p.channelsLock.Unlock()
+
+	close(p.intervalChangeChan)
+	p.intervalChangeChan = nil
+
+	close(p.triggerPushChan)
+	p.triggerPushChan = nil
+}
+
+func (p *pushedSet) startLoop() {
+	p.initiateChannels()
+	defer p.closeChannels()
 
 	p.set.RegisterPushListener(p)
-
-	defer func() {
-		p.set.DeregisterPushListener(p)
-
-		p.channelsLock.Lock()
-		defer p.channelsLock.Unlock()
-
-		close(p.intervalChangeChan)
-		p.intervalChangeChan = nil
-
-		close(p.triggerPushChan)
-		p.triggerPushChan = nil
-	}()
+	defer p.set.DeregisterPushListener(p)
 
 	for {
 		if !p.loop() {
