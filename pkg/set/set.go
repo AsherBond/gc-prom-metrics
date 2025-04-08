@@ -57,7 +57,7 @@ func (s *Set) TriggerPush() {
 	}
 }
 
-func (s *Set) ChangeInterval(interval *time.Duration) {
+func (s *Set) ChangePushInterval(interval *time.Duration) {
 	s.pushListenersLock.RLock()
 	defer s.pushListenersLock.RUnlock()
 

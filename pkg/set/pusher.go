@@ -2,6 +2,7 @@ package set
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/groundcover-com/metrics/pkg/options"
@@ -85,6 +86,7 @@ func (p *pushedSet) OnTriggerPush() {
 	default:
 	}
 }
+
 func (p *pushedSet) OnChangeInterval(interval *time.Duration) {
 	p.setOpts.Interval = interval
 
@@ -95,9 +97,10 @@ func (p *pushedSet) OnChangeInterval(interval *time.Duration) {
 }
 
 type Pusher struct {
-	ctx  context.Context
-	sets []*pushedSet
-	opts options.PusherOptions
+	ctx      context.Context
+	sets     []*pushedSet
+	setsLock sync.RWMutex
+	opts     options.PusherOptions
 }
 
 func NewPusher(ctx context.Context, opts options.PusherOptions) *Pusher {
@@ -105,12 +108,18 @@ func NewPusher(ctx context.Context, opts options.PusherOptions) *Pusher {
 }
 
 func (p *Pusher) AddSet(set *Set, opts options.PushedSetOptions) {
+	p.setsLock.Lock()
+	defer p.setsLock.Unlock()
+
 	pushedSet := newPushedSet(p.ctx, set, opts, p.opts)
 	p.sets = append(p.sets, pushedSet)
 	pushedSet.startLoop()
 }
 
 func (p *Pusher) RemoveSet(set *Set) {
+	p.setsLock.Lock()
+	defer p.setsLock.Unlock()
+
 	for i, s := range p.sets {
 		if s.set == set {
 			s.ctxCancel()
