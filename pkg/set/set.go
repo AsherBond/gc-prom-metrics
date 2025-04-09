@@ -46,10 +46,6 @@ func (s *Set) InitPush(
 	return s.pusher.Start(ctx)
 }
 
-func (s *Set) PushMetrics(ctx context.Context, pushURL string, opts *metrics.PushOptions) error {
-	return s.set.PushMetrics(ctx, pushURL, opts)
-}
-
 func (s *Set) TriggerPush() error {
 	if s.pusher == nil {
 		return ErrPusherNotInitialized

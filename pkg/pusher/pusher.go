@@ -8,10 +8,8 @@ import (
 )
 
 type SetPusher struct {
-	opts      SetPusherOptions
-	ctx       context.Context
-	ctxCancel context.CancelFunc
-	pushFunc  func(context.Context) error
+	opts     SetPusherOptions
+	pushFunc func(context.Context) error
 
 	intervalChangeChan chan *time.Duration
 	triggerPushChan    chan struct{}
@@ -29,13 +27,11 @@ func NewSetPusher(
 }
 
 func (p *SetPusher) Start(ctx context.Context) error {
-	p.ctx, p.ctxCancel = context.WithCancel(ctx)
-
 	p.initiateChannels()
 	defer p.closeChannels()
 
 	for {
-		shouldContinue, err := p.loop()
+		shouldContinue, err := p.loop(ctx)
 		if err != nil {
 			return err
 		}
@@ -83,7 +79,7 @@ func (p *SetPusher) ChangeInterval(interval *time.Duration) error {
 	return nil
 }
 
-func (p *SetPusher) loop() (shouldContinue bool, err error) {
+func (p *SetPusher) loop(ctx context.Context) (shouldContinue bool, err error) {
 	var tickerChannel <-chan time.Time
 	if p.opts.Interval != nil {
 		ticker := time.NewTicker(*p.opts.Interval)
@@ -98,17 +94,17 @@ func (p *SetPusher) loop() (shouldContinue bool, err error) {
 	for {
 		select {
 		case <-tickerChannel:
-			if err := p.pushFunc(p.ctx); err != nil {
+			if err := p.pushFunc(ctx); err != nil {
 				return false, fmt.Errorf("error interval-pushing metrics: %w", err)
 			}
 		case <-p.intervalChangeChan:
 			return true, nil
 		case <-p.triggerPushChan:
-			if err := p.pushFunc(p.ctx); err != nil {
+			if err := p.pushFunc(ctx); err != nil {
 				return false, fmt.Errorf("error trigger-pushing metrics: %w", err)
 			}
 			return true, nil
-		case <-p.ctx.Done():
+		case <-ctx.Done():
 			return false, nil
 		}
 	}
