@@ -1,4 +1,4 @@
-package global
+package metrics
 
 import (
 	"github.com/VictoriaMetrics/metrics"
@@ -6,15 +6,15 @@ import (
 )
 
 func NewCounter(name string) *metrics.Counter {
-	return Set.NewCounter(name)
+	return defaultSet.NewCounter(name)
 }
 
 func CreateCounter(name string, labels map[string]string, opts options.Options) *metrics.Counter {
-	return Set.CreateCounter(name, labels, opts)
+	return defaultSet.CreateCounter(name, labels, opts)
 }
 
 func GetOrCreateCounter(name string, labels map[string]string, opts options.Options) *metrics.Counter {
-	return Set.GetOrCreateCounter(name, labels, opts)
+	return defaultSet.GetOrCreateCounter(name, labels, opts)
 }
 
 func CreateErrorCounter(name string, labels map[string]string) *metrics.Counter {

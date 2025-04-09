@@ -1,4 +1,4 @@
-package global
+package metrics
 
 import (
 	"github.com/VictoriaMetrics/metrics"
@@ -11,7 +11,7 @@ func CreateSummary(
 	opts options.Options,
 	summaryOpts options.SummaryOptions,
 ) *metrics.Summary {
-	return Set.CreateSummary(name, labels, opts, summaryOpts)
+	return defaultSet.CreateSummary(name, labels, opts, summaryOpts)
 }
 
 func GetOrCreateSummary(
@@ -20,7 +20,7 @@ func GetOrCreateSummary(
 	opts options.Options,
 	summaryOpts options.SummaryOptions,
 ) *metrics.Summary {
-	return Set.GetOrCreateSummary(name, labels, opts, summaryOpts)
+	return defaultSet.GetOrCreateSummary(name, labels, opts, summaryOpts)
 }
 
 func CreateErrorSummary(name string, labels map[string]string) *metrics.Summary {

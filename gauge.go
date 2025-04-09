@@ -1,4 +1,4 @@
-package global
+package metrics
 
 import (
 	"sync/atomic"
@@ -8,7 +8,7 @@ import (
 )
 
 func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *metrics.Gauge {
-	return Set.CreateGauge(name, labels, f, opts)
+	return defaultSet.CreateGauge(name, labels, f, opts)
 }
 
 func GetOrCreateGauge(
@@ -17,7 +17,7 @@ func GetOrCreateGauge(
 	f func() float64,
 	opts options.Options,
 ) *metrics.Gauge {
-	return Set.GetOrCreateGauge(name, labels, f, opts)
+	return defaultSet.GetOrCreateGauge(name, labels, f, opts)
 }
 
 func CreateErrorGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {

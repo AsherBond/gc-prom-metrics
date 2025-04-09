@@ -1,4 +1,4 @@
-package global
+package metrics
 
 import (
 	"github.com/VictoriaMetrics/metrics"
@@ -6,11 +6,11 @@ import (
 )
 
 func CreateHistogram(name string, labels map[string]string, opts options.Options) *metrics.Histogram {
-	return Set.CreateHistogram(name, labels, opts)
+	return defaultSet.CreateHistogram(name, labels, opts)
 }
 
 func GetOrCreateHistogram(name string, labels map[string]string, opts options.Options) *metrics.Histogram {
-	return Set.GetOrCreateHistogram(name, labels, opts)
+	return defaultSet.GetOrCreateHistogram(name, labels, opts)
 }
 
 func CreateErrorHistogram(name string, labels map[string]string) *metrics.Histogram {
