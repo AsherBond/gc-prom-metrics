@@ -2,38 +2,22 @@ package pusher
 
 import (
 	"time"
-
-	"github.com/VictoriaMetrics/metrics"
 )
 
-type PusherOptions struct {
-	URL         string
-	PushOptions metrics.PushOptions
-}
-
-func NewPusherOptions() PusherOptions {
-	return PusherOptions{}
-}
-
-func (o PusherOptions) WithPushOptions(pushOptions metrics.PushOptions) PusherOptions {
-	o.PushOptions = pushOptions
-	return o
-}
-
-func (o PusherOptions) WithURL(url string) PusherOptions {
-	o.URL = url
-	return o
-}
-
-type PushedSetOptions struct {
+type SetPusherOptions struct {
 	Interval *time.Duration
 }
 
-func NewPushedSetOptions() PushedSetOptions {
-	return PushedSetOptions{}
+func NewSetPusherOptions() SetPusherOptions {
+	return SetPusherOptions{}
 }
 
-func (o PushedSetOptions) WithInterval(interval time.Duration) PushedSetOptions {
+func (o SetPusherOptions) WithInterval(interval time.Duration) SetPusherOptions {
 	o.Interval = &interval
+	return o
+}
+
+func (o SetPusherOptions) CancelInterval() SetPusherOptions {
+	o.Interval = nil
 	return o
 }
