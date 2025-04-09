@@ -3,11 +3,11 @@ package metrics
 import (
 	"sync/atomic"
 
-	"github.com/VictoriaMetrics/metrics"
 	"github.com/groundcover-com/metrics/pkg/options"
+	"github.com/groundcover-com/metrics/pkg/set"
 )
 
-func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *metrics.Gauge {
+func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *set.Gauge {
 	return defaultSet.CreateGauge(name, labels, f, opts)
 }
 
@@ -16,31 +16,31 @@ func GetOrCreateGauge(
 	labels map[string]string,
 	f func() float64,
 	opts options.Options,
-) *metrics.Gauge {
+) *set.Gauge {
 	return defaultSet.GetOrCreateGauge(name, labels, f, opts)
 }
 
-func CreateErrorGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func CreateErrorGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return CreateGauge(name, labels, f, options.Error)
 }
 
-func CreateWarningGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func CreateWarningGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return CreateGauge(name, labels, f, options.Warning)
 }
 
-func CreateInfoGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func CreateInfoGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return CreateGauge(name, labels, f, options.Info)
 }
 
-func GetOrCreateErrorGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func GetOrCreateErrorGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Error)
 }
 
-func GetOrCreateWarningGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func GetOrCreateWarningGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Warning)
 }
 
-func GetOrCreateInfoGauge(name string, labels map[string]string, f func() float64) *metrics.Gauge {
+func GetOrCreateInfoGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Info)
 }
 

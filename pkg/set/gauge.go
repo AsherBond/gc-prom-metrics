@@ -7,12 +7,14 @@ import (
 	"github.com/groundcover-com/metrics/pkg/options"
 )
 
+type Gauge = metrics.Gauge
+
 func (set *Set) CreateGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
 	opts options.Options,
-) *metrics.Gauge {
+) *Gauge {
 	return set.set.NewGauge(formatMetric(name, opts.Apply(labels)), f)
 }
 
@@ -21,7 +23,7 @@ func (set *Set) GetOrCreateGauge(
 	labels map[string]string,
 	f func() float64,
 	opts options.Options,
-) *metrics.Gauge {
+) *Gauge {
 	return set.set.GetOrCreateGauge(formatMetric(name, opts.Apply(labels)), f)
 }
 
@@ -29,7 +31,7 @@ func (set *Set) CreateErrorGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.CreateGauge(name, labels, f, options.Error)
 }
 
@@ -37,7 +39,7 @@ func (set *Set) CreateWarningGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.CreateGauge(name, labels, f, options.Warning)
 }
 
@@ -45,7 +47,7 @@ func (set *Set) CreateInfoGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.CreateGauge(name, labels, f, options.Info)
 }
 
@@ -53,7 +55,7 @@ func (set *Set) GetOrCreateErrorGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.GetOrCreateGauge(name, labels, f, options.Error)
 }
 
@@ -61,7 +63,7 @@ func (set *Set) GetOrCreateWarningGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.GetOrCreateGauge(name, labels, f, options.Warning)
 }
 
@@ -69,7 +71,7 @@ func (set *Set) GetOrCreateInfoGauge(
 	name string,
 	labels map[string]string,
 	f func() float64,
-) *metrics.Gauge {
+) *Gauge {
 	return set.GetOrCreateGauge(name, labels, f, options.Info)
 }
 
