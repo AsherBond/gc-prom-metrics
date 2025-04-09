@@ -45,37 +45,6 @@ func (p *SetPusher) StartLoop(ctx context.Context) error {
 	}
 }
 
-func (p *SetPusher) loop() (shouldContinue bool, err error) {
-	var tickerChannel <-chan time.Time
-	if p.opts.Interval != nil {
-		ticker := time.NewTicker(*p.opts.Interval)
-		defer ticker.Stop()
-		tickerChannel = ticker.C
-	} else {
-		ch := make(chan time.Time)
-		defer close(ch)
-		tickerChannel = ch
-	}
-
-	for {
-		select {
-		case <-tickerChannel:
-			if err := p.pushFunc(p.ctx); err != nil {
-				return false, fmt.Errorf("error interval-pushing metrics: %w", err)
-			}
-		case <-p.intervalChangeChan:
-			return true, nil
-		case <-p.triggerPushChan:
-			if err := p.pushFunc(p.ctx); err != nil {
-				return false, fmt.Errorf("error trigger-pushing metrics: %w", err)
-			}
-			return true, nil
-		case <-p.ctx.Done():
-			return false, nil
-		}
-	}
-}
-
 func (p *SetPusher) TriggerPush() error {
 	p.channelsLock.Lock()
 	defer p.channelsLock.Unlock()
@@ -112,6 +81,37 @@ func (p *SetPusher) ChangeInterval(interval *time.Duration) error {
 	}
 
 	return nil
+}
+
+func (p *SetPusher) loop() (shouldContinue bool, err error) {
+	var tickerChannel <-chan time.Time
+	if p.opts.Interval != nil {
+		ticker := time.NewTicker(*p.opts.Interval)
+		defer ticker.Stop()
+		tickerChannel = ticker.C
+	} else {
+		ch := make(chan time.Time)
+		defer close(ch)
+		tickerChannel = ch
+	}
+
+	for {
+		select {
+		case <-tickerChannel:
+			if err := p.pushFunc(p.ctx); err != nil {
+				return false, fmt.Errorf("error interval-pushing metrics: %w", err)
+			}
+		case <-p.intervalChangeChan:
+			return true, nil
+		case <-p.triggerPushChan:
+			if err := p.pushFunc(p.ctx); err != nil {
+				return false, fmt.Errorf("error trigger-pushing metrics: %w", err)
+			}
+			return true, nil
+		case <-p.ctx.Done():
+			return false, nil
+		}
+	}
 }
 
 func (p *SetPusher) initiateChannels() {
