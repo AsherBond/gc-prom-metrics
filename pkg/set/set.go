@@ -34,7 +34,7 @@ func (s *Set) InitPush(
 	pushURL string,
 	interval time.Duration,
 	opts *metrics.PushOptions,
-) {
+) error {
 	s.pusher = pusher.NewSetPusher(
 		pusher.SetPusherOptions{
 			Interval: &interval,
@@ -43,7 +43,7 @@ func (s *Set) InitPush(
 			return s.set.PushMetrics(ctx, pushURL, opts)
 		},
 	)
-	s.pusher.StartLoop(ctx)
+	return s.pusher.Start(ctx)
 }
 
 func (s *Set) PushMetrics(ctx context.Context, pushURL string, opts *metrics.PushOptions) error {
