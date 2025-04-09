@@ -47,22 +47,25 @@ func (s *Set) InitPush(
 }
 
 func (s *Set) TriggerPush() error {
-	if s.pusher == nil {
+	pusher := s.pusher
+	if pusher == nil {
 		return ErrPusherNotInitialized
 	}
-	return s.pusher.TriggerPush()
+	return pusher.TriggerPush()
 }
 
 func (s *Set) ChangePushInterval(interval time.Duration) error {
-	if s.pusher == nil {
+	pusher := s.pusher
+	if pusher == nil {
 		return ErrPusherNotInitialized
 	}
-	return s.pusher.ChangeInterval(&interval)
+	return pusher.ChangeInterval(&interval)
 }
 
 func (s *Set) CancelPushInterval() error {
-	if s.pusher == nil {
+	pusher := s.pusher
+	if pusher == nil {
 		return ErrPusherNotInitialized
 	}
-	return s.pusher.ChangeInterval(nil)
+	return pusher.ChangeInterval(nil)
 }
