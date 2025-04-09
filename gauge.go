@@ -7,7 +7,9 @@ import (
 	"github.com/groundcover-com/metrics/pkg/set"
 )
 
-func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *set.Gauge {
+type Gauge = set.Gauge
+
+func CreateGauge(name string, labels map[string]string, f func() float64, opts options.Options) *Gauge {
 	return defaultSet.CreateGauge(name, labels, f, opts)
 }
 
@@ -16,31 +18,31 @@ func GetOrCreateGauge(
 	labels map[string]string,
 	f func() float64,
 	opts options.Options,
-) *set.Gauge {
+) *Gauge {
 	return defaultSet.GetOrCreateGauge(name, labels, f, opts)
 }
 
-func CreateErrorGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func CreateErrorGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return CreateGauge(name, labels, f, options.Error)
 }
 
-func CreateWarningGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func CreateWarningGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return CreateGauge(name, labels, f, options.Warning)
 }
 
-func CreateInfoGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func CreateInfoGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return CreateGauge(name, labels, f, options.Info)
 }
 
-func GetOrCreateErrorGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func GetOrCreateErrorGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Error)
 }
 
-func GetOrCreateWarningGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func GetOrCreateWarningGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Warning)
 }
 
-func GetOrCreateInfoGauge(name string, labels map[string]string, f func() float64) *set.Gauge {
+func GetOrCreateInfoGauge(name string, labels map[string]string, f func() float64) *Gauge {
 	return GetOrCreateGauge(name, labels, f, options.Info)
 }
 
