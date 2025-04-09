@@ -1,8 +1,8 @@
-package factory
+package metrics
 
 import (
+	"github.com/VictoriaMetrics/metrics"
 	"github.com/groundcover-com/metrics/pkg/options"
-	"github.com/groundcover-com/metrics/pkg/types"
 )
 
 func CreateSummary(
@@ -10,8 +10,8 @@ func CreateSummary(
 	labels map[string]string,
 	opts options.Options,
 	summaryOpts options.SummaryOptions,
-) *types.Summary {
-	return types.NewSummaryExt(formatMetric(name, opts.Apply(labels)), summaryOpts.Window, summaryOpts.Quantiles)
+) *metrics.Summary {
+	return defaultSet.CreateSummary(name, labels, opts, summaryOpts)
 }
 
 func GetOrCreateSummary(
@@ -19,23 +19,19 @@ func GetOrCreateSummary(
 	labels map[string]string,
 	opts options.Options,
 	summaryOpts options.SummaryOptions,
-) *types.Summary {
-	return types.GetOrCreateSummaryExt(
-		formatMetric(name, opts.Apply(labels)),
-		summaryOpts.Window,
-		summaryOpts.Quantiles,
-	)
+) *metrics.Summary {
+	return defaultSet.GetOrCreateSummary(name, labels, opts, summaryOpts)
 }
 
-func CreateErrorSummary(name string, labels map[string]string) *types.Summary {
+func CreateErrorSummary(name string, labels map[string]string) *metrics.Summary {
 	return CreateSummary(name, labels, options.Error, options.NewSummaryOptions())
 }
 
-func CreateWarningSummary(name string, labels map[string]string) *types.Summary {
+func CreateWarningSummary(name string, labels map[string]string) *metrics.Summary {
 	return CreateSummary(name, labels, options.Warning, options.NewSummaryOptions())
 }
 
-func CreateInfoSummary(name string, labels map[string]string) *types.Summary {
+func CreateInfoSummary(name string, labels map[string]string) *metrics.Summary {
 	return CreateSummary(name, labels, options.Info, options.NewSummaryOptions())
 }
 
@@ -43,7 +39,7 @@ func CreateErrorSummaryWithOptions(
 	name string,
 	labels map[string]string,
 	opts options.SummaryOptions,
-) *types.Summary {
+) *metrics.Summary {
 	return CreateSummary(name, labels, options.Error, opts)
 }
 
@@ -51,23 +47,23 @@ func CreateWarningSummaryWithOptions(
 	name string,
 	labels map[string]string,
 	opts options.SummaryOptions,
-) *types.Summary {
+) *metrics.Summary {
 	return CreateSummary(name, labels, options.Warning, opts)
 }
 
-func CreateInfoSummaryWithOptions(name string, labels map[string]string, opts options.SummaryOptions) *types.Summary {
+func CreateInfoSummaryWithOptions(name string, labels map[string]string, opts options.SummaryOptions) *metrics.Summary {
 	return CreateSummary(name, labels, options.Info, opts)
 }
 
-func GetOrCreateErrorSummary(name string, labels map[string]string) *types.Summary {
+func GetOrCreateErrorSummary(name string, labels map[string]string) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Error, options.NewSummaryOptions())
 }
 
-func GetOrCreateWarningSummary(name string, labels map[string]string) *types.Summary {
+func GetOrCreateWarningSummary(name string, labels map[string]string) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Warning, options.NewSummaryOptions())
 }
 
-func GetOrCreateInfoSummary(name string, labels map[string]string) *types.Summary {
+func GetOrCreateInfoSummary(name string, labels map[string]string) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Info, options.NewSummaryOptions())
 }
 
@@ -75,7 +71,7 @@ func GetOrCreateErrorSummaryWithOptions(
 	name string,
 	labels map[string]string,
 	opts options.SummaryOptions,
-) *types.Summary {
+) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Error, opts)
 }
 
@@ -83,7 +79,7 @@ func GetOrCreateWarningSummaryWithOptions(
 	name string,
 	labels map[string]string,
 	opts options.SummaryOptions,
-) *types.Summary {
+) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Warning, opts)
 }
 
@@ -91,6 +87,6 @@ func GetOrCreateInfoSummaryWithOptions(
 	name string,
 	labels map[string]string,
 	opts options.SummaryOptions,
-) *types.Summary {
+) *metrics.Summary {
 	return GetOrCreateSummary(name, labels, options.Info, opts)
 }
