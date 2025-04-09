@@ -28,7 +28,7 @@ func NewSetPusher(
 	}
 }
 
-func (p *SetPusher) StartLoop(ctx context.Context) error {
+func (p *SetPusher) Start(ctx context.Context) error {
 	p.ctx, p.ctxCancel = context.WithCancel(ctx)
 
 	p.initiateChannels()
